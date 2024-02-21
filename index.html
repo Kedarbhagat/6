@@ -1,0 +1,49 @@
+#include<stdio.h>
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<time.h>
+#include<stdlib.h>
+int main(int argc, char *argv[])
+{
+ struct stat sb; // Declare a structure 'sb' of type 'struct stat' to store file attributes.
+ if(argc != 2)
+ {
+ fprintf(stderr,"usage: %s <pathname>\n", argv[0]); // Print an error message if the program 
+is not called with exactly one argument.
+ exit(EXIT_FAILURE); // Terminate the program with a failure status.
+ }
+ if(stat(argv[1], &sb) == -1)
+ {
+ perror("stat"); // Print an error message if the 'stat' system call fails.
+ exit(EXIT_FAILURE); // Terminate the program with a failure status.
+ }
+ printf("file type: ");
+ switch(sb.st_mode & S_IFMT) // Determine and print the file type based on the mode bits using 
+a switch statement.
+ {
+ case S_IFBLK: printf("block device file\n"); // If the file is a block device, print accordingly.
+ break;
+ case S_IFCHR: printf("character device file\n"); // If the file is a character device, print 
+accordingly.
+ break;
+ case S_IFDIR: printf("directory\n"); // If the file is a directory, print accordingly.
+ break;
+ case S_IFIFO: printf("FIFO/pipe\n"); // If the file is a FIFO/pipe, print accordingly.
+ break;
+ case S_IFLNK: printf("symlink\n"); // If the file is a symbolic link, print accordingly.
+ break;
+ case S_IFREG: printf("regular file\n"); // If the file is a regular file, print accordingly.
+ break;
+ case S_IFSOCK: printf("socket\n"); // If the file is a socket, print accordingly.
+ break;
+ default: printf("regular file\n"); // If the file type is not recognized, assume it's a regular 
+file.
+ break;
+ }
+ printf("Inode number: %ld\n", (long) sb.st_ino); // Print the inode number of the file.
+ printf("Mode: %lo(octal)\n", (unsigned long) sb.st_mode); // Print the file mode in octal 
+representation.
+ printf("Blocks allocated: %lld\n", (long long) sb.st_blocks); // Print the number of blocks 
+allocated to the file.
+ exit(EXIT_SUCCESS); // Terminate the program with a success status.
+}
